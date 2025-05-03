@@ -39,7 +39,16 @@ function Home() {
           className="home-divider"
           style={{ borderColor: "#281a79" }}
         >
-          <h2 style={{ fontSize: "20px" }}>Find Your Best Fit</h2>
+          <h2
+            style={{
+              fontSize: "20px",
+              fontFamily: "Raleway",
+              letterSpacing: "2px",
+              textTransform: "uppercase",
+            }}
+          >
+            Find Your Best Fit
+          </h2>
         </Divider>
         {clothingsLoading ? (
           <p>LOADING</p>
@@ -52,14 +61,18 @@ function Home() {
                   hoverable
                   cover={
                     <Badge.Ribbon
-                      text={`${item.gender}`}
+                      text={
+                        <span
+                          style={{ fontFamily: "Roboto" }}
+                        >{`${item.gender}`}</span>
+                      }
                       color="#281a79"
                       style={{
                         display: "block",
                         right: "10px",
                       }}
                     >
-                      <Carousel autoplay autoplaySpeed={2500} fade dots={false}>
+                      <Carousel autoplay autoplaySpeed={3500} fade dots={false}>
                         {Array.isArray(item.img) && item.img.length > 0 ? (
                           item.img.map((imgSrc, index) => (
                             <div key={index}>
@@ -123,12 +136,20 @@ function Home() {
                     </Tag>
                   )}
                   <Card.Meta
-                    title={item.name}
+                    title={
+                      <span style={{ fontFamily: "Raleway" }}>{item.name}</span>
+                    }
                     description={`KES. ${item.price.toLocaleString()} | ${
                       item.type ? `Type: ${item.type}` : null
                     }`}
                   />
-                  <Card.Meta description={`Available sizes: ${item.sizes}`} />
+                  <Card.Meta
+                    description={
+                      <span
+                        style={{ fontFamily: "Roboto" }}
+                      >{`Available sizes: ${item.sizes}`}</span>
+                    }
+                  />
                   <br />
                   <div style={{ display: "flex", gap: "10px" }}>
                     <Button type="primary" onClick={() => viewItem(item)}>
