@@ -14,9 +14,55 @@ import {
 } from "antd";
 import React, { useContext } from "react";
 import { colorMap } from "../assets/data/data";
+import { UserContext } from "../App";
+import { clothings } from "../assets/data/data";
+import Cart from "../pages/cart";
 
 const { Title, Text } = Typography;
 function ItemModal({ modalContent, loading, openModal, setOpenModal }) {
+  const { setCartItem, setCartItems, closeDrawer, openDrawer, showDrawer } =
+    useContext(UserContext);
+  const allItems = [...clothings];
+
+  const addToCart = (item) => {
+    const selectedItem = allItems.find((i) => i._id === item._id);
+
+    if (!selectedItem) {
+      console.warn("Item not found");
+      return;
+    }
+
+    setCartItem((prevCart) => {
+      const updatedCart = [
+        ...prevCart,
+        {
+          _id: selectedItem._id,
+          name: selectedItem.name,
+          fabricOptions: selectedItem.fabricOptions,
+          description: selectedItem.description,
+          img: selectedItem.img[0],
+          price: selectedItem.price,
+          rating: selectedItem.rating,
+          customizableFeatures: selectedItem.customizableFeatures,
+          sizes: selectedItem.sizes,
+          totalReviews: selectedItem.totalReviews,
+          colors: selectedItem.colors,
+          occasion: selectedItem.occasion,
+          careInstructions: selectedItem.careInstructions,
+          deliveryTime: selectedItem.deliveryTime,
+          isNewArrival: selectedItem.isNewArrival,
+          isBestseller: selectedItem.isBestseller,
+          quantity: 1,
+        },
+      ];
+
+      setCartItems(updatedCart);
+      return updatedCart;
+    });
+
+    showDrawer();
+  };
+  
   return (
     <>
       <Modal
@@ -100,7 +146,6 @@ function ItemModal({ modalContent, loading, openModal, setOpenModal }) {
                   </Tag>
                 )}
               </div>
-
               {modalContent.rating > 0 ? (
                 <div
                   style={{
@@ -131,18 +176,15 @@ function ItemModal({ modalContent, loading, openModal, setOpenModal }) {
                   Not Yet Rated
                 </Tag>
               )}
-
               <Text
                 type="secondary"
                 style={{ display: "block", marginBottom: 12 }}
               >
                 {modalContent.category}
               </Text>
-
               <Divider />
               <Text>{modalContent.description}</Text>
               <Divider />
-
               {/* Extra Details */}
               <Row gutter={[16, 16]}>
                 <Col xs={24} sm={12}>
@@ -175,7 +217,6 @@ function ItemModal({ modalContent, loading, openModal, setOpenModal }) {
                   <Text>{modalContent.careInstructions}</Text>
                 </Col>
               </Row>
-
               <Text strong>Available Colours:</Text>
               <Row gutter={[8, 8]}>
                 {modalContent.colors.map((color, index) => (
@@ -193,20 +234,33 @@ function ItemModal({ modalContent, loading, openModal, setOpenModal }) {
                   </Col>
                 ))}
               </Row>
-
               <Divider />
               <Title level={4} style={{ color: "#4bbe11" }}>
                 KES {modalContent.price.toLocaleString()}
               </Title>
-
               <Button
                 type="primary"
                 size="large"
                 block
                 style={{ marginTop: 16, fontSize: "1rem", padding: "10px" }}
+                onClick={() => addToCart(modalContent)}
               >
                 Add to Cart
-              </Button>
+              </Button>{" "}
+              <Drawer
+                title="Your Cart"
+                width={window.innerWidth < 768 ? 350 : 600}
+                onClose={closeDrawer}
+                open={openDrawer}
+                styles={{ body: { paddingBottom: 60 } }}
+                extra={
+                  <Space>
+                    <Button onClick={closeDrawer}>Cancel</Button>
+                  </Space>
+                }
+              >
+                <Cart />
+              </Drawer>
             </Col>
           </Row>
         )}

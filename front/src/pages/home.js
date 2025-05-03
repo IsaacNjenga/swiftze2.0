@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Card,
   Button,
@@ -15,13 +15,57 @@ import {
 } from "antd";
 import { clothings } from "../assets/data/data.js";
 import ItemModal from "../components/itemModal.js";
+import Cart from "./cart.js";
+import { UserContext } from "../App.js";
 
 function Home() {
   const clothingsLoading = false;
-
+  const { setCartItem, setCartItems, closeDrawer, openDrawer, showDrawer } =
+    useContext(UserContext);
   const [openModal, setOpenModal] = useState(null);
   const [modalContent, setModalContent] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const allItems = [...clothings];
+
+  const addToCart = (item) => {
+    const selectedItem = allItems.find((i) => i._id === item._id);
+
+    if (!selectedItem) {
+      console.warn("Item not found");
+      return;
+    }
+
+    setCartItem((prevCart) => {
+      const updatedCart = [
+        ...prevCart,
+        {
+          _id: selectedItem._id,
+          name: selectedItem.name,
+          fabricOptions: selectedItem.fabricOptions,
+          description: selectedItem.description,
+          img: selectedItem.img[0],
+          price: selectedItem.price,
+          rating: selectedItem.rating,
+          customizableFeatures: selectedItem.customizableFeatures,
+          sizes: selectedItem.sizes,
+          totalReviews: selectedItem.totalReviews,
+          colors: selectedItem.colors,
+          occasion: selectedItem.occasion,
+          careInstructions: selectedItem.careInstructions,
+          deliveryTime: selectedItem.deliveryTime,
+          isNewArrival: selectedItem.isNewArrival,
+          isBestseller: selectedItem.isBestseller,
+          quantity: 1,
+        },
+      ];
+
+      setCartItems(updatedCart);
+      return updatedCart;
+    });
+
+    showDrawer();
+  };
 
   const viewItem = (item) => {
     setOpenModal(true);
@@ -147,7 +191,7 @@ function Home() {
                     description={
                       <span
                         style={{ fontFamily: "Roboto" }}
-                      >{`Available sizes: ${item.sizes}`}</span>
+                      >{`Available sizes: ${item.sizes.join(", ")}`}</span>
                     }
                   />
                   <br />
@@ -158,11 +202,11 @@ function Home() {
                     <Button
                       style={{ backgroundColor: "green" }}
                       type="primary"
-                      // onClick={() => addToCart(item)}
+                      onClick={() => addToCart(item)}
                     >
                       Add To Cart
                     </Button>{" "}
-                    {/* <Drawer
+                    <Drawer
                       title="Your Cart"
                       width={window.innerWidth < 768 ? 350 : 600}
                       onClose={closeDrawer}
@@ -175,7 +219,7 @@ function Home() {
                       }
                     >
                       <Cart />
-                    </Drawer> */}
+                    </Drawer>
                   </div>
                 </Card>
               </Col>
